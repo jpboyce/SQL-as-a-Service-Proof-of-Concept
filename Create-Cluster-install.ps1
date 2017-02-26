@@ -9,7 +9,7 @@ $SQL_Node_array = $sqlnode_names
 # We need to change the SQL node names to FQDN format
 for ($i=0; $i -le $SQL_Node_array.Length-1; $i++)
 {
-    $SQL_Node_array[$i] = $SQL_Node_array[$i]+".boyce.local"
+    $SQL_Node_array[$i] = $SQL_Node_array[$i]+".contoso.com"
 }
 $SQL_Node_array | %{$SQL_Node_String += ($(if($SQL_Node_String){","}) + $_ + $t)}   # Convert the SQL node array to a comma seperated string for easier handling later on
 $FSW_Node = $fswnode_name                   # File Share Witness Node Name
@@ -17,7 +17,7 @@ $FSW_Node = $fswnode_name                   # File Share Witness Node Name
 $FSW_Node.Trim()
 $FSW_Node = $FSW_Node.Replace("\s","")
 $FSW_Node = $FSW_Node.Replace(" ","")
-$FSW_Node = $FSW_Node+".boyce.local"
+$FSW_Node = $FSW_Node+".contoso.com"
 $FSW_Share = $FSW_Share
 $AD_OU = $AD_OU                        # OU to create the cluster object
 $AD_Domain =   "boyce.local"                  # Domain to create the object in
