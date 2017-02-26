@@ -1,0 +1,189 @@
+'@type': "SoftwareComponentType"
+createdDate: "2016-02-12T07:37:10.837Z"
+lastUpdated: "2016-02-12T07:39:11.163Z"
+id: "Software.JointoActiveDirectory"
+name: "Join to Active Directory"
+description: "Join VM to Active Directory"
+publishStatus: "PUBLISHED"
+publishStatusName: "Published"
+schema:
+  fields:
+  - id: "AD_OUPath"
+    label: "AD_OUPath"
+    description: "Location in AD to join the machine"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "OU=Computers,OU=vRealize,DC=contoso,DC=com"
+    isMultiValued: false
+  - id: "AD_Domain"
+    label: "AD_Domain"
+    description: "Domain Name to Join"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "contoso.com"
+    isMultiValued: false
+  - id: "host"
+    label: "Container"
+    description: ""
+    dataType:
+      type: "ref"
+      componentTypeId: "com.vmware.csp.iaas.blueprint.service"
+      classId: "Infrastructure.Machine.Schema"
+      label: "Machine"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "visible"
+        value:
+          type: "constantClause"
+          value:
+            type: "boolean"
+            value: false
+    isMultiValued: false
+  - id: "AD_Password"
+    label: "AD_Password"
+    description: "Password for the account"
+    dataType:
+      type: "primitive"
+      typeId: "SECURE_STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "secureString"
+            value: ""
+      - type: "encrypted"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+    isMultiValued: false
+  - id: "AD_Username"
+    label: "AD_Username"
+    description: "Account to perform the join with"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "contoso\\vRA-Dom-Join"
+    isMultiValued: false
+containerFieldId: "host"
+lifecycleTasks:
+- createdDate: "2016-02-20T05:36:23.282Z"
+  lastUpdated: "2016-02-22T07:35:25.263Z"
+  script:
+    scriptContent: "# Reset WinRM service\n# Put this in to restart the WinRM service\
+      \ and hopefully fix the SPN record issue\n\nGet-Service -Name \"WinRM\" -verbose\
+      \ | Restart-Service -verbose\n\n# Enable WSMANCred\nwrite-output \"`nCurrent\
+      \ Settings:\"\nGet-WSManCredSSP -Verbose\n\nwrite-output \"`nEnabling WSMAN\
+      \ Credssp...\"\nenable-wsmancredssp -role server -force -Verbose\n\nwrite-output\
+      \ \"`nChecking settings again...\"\nGet-WSManCredSSP -Verbose\n\nwrite-output\
+      \ \"`nPerforming GPUpdate for Fresh Credential Delegation...\"\nGPUpdate /force\n\
+      \nwrite-output \"`nDoing GPResult...\"\ngpresult /R /V\n\n\nWrite-Output \"\
+      `nSetting CredSSP Registry Setting...\"\nSet-ItemProperty HKLM:\\SYSTEM\\CurrentControlSet\\\
+      Control\\Lsa\\Credssp\\PolicyDefaults\\AllowFreshCredentialsDomain -Name WSMan\
+      \ -Value \"WSMAN/*.contoso.com\" -Force -Verbose\n\nWrite-Output \"`nConfirming\
+      \ Setting...\"\nGet-ItemProperty HKLM:\\SYSTEM\\CurrentControlSet\\Control\\\
+      Lsa\\Credssp\\PolicyDefaults\\AllowFreshCredentialsDomain -Name WSMan\n\nWrite-Output\
+      \ \"`nSetting Service CredSSP Auth to True...\"\nSet-item \"WSMan:\\localhost\\\
+      Service\\Auth\\CredSSP\" -Value $true -Verbose\nWrite-Output \"Confirming...\"\
+      \nget-item \"WSMan:\\localhost\\Service\\Auth\\CredSSP\"\n\nWrite-Output \"\
+      `nSetting Client CredSSP Auth to True...\"\nSet-item \"WSMan:\\localhost\\Client\\\
+      Auth\\CredSSP\" -Value $true -Verbose\nWrite-Output \"Confirming...\"\nget-item\
+      \ \"WSMan:\\localhost\\Client\\Auth\\CredSSP\"\n\nWrite-Output \"`nGetting trusted\
+      \ hosts...\"\nget-item \"WSMan:\\localhost\\Client\\TrustedHosts\"\n\n"
+    isRebootAfter: false
+    scriptTypeId: "powershell"
+  taskDescriptorRef:
+    id: "CONFIGURE"
+    label: "Configure"
+- createdDate: "2016-02-12T07:37:10.839Z"
+  lastUpdated: "2016-02-22T07:35:25.263Z"
+  script:
+    scriptContent: "# Join AD Script\n# This script will perform the following actions\n\
+      # 1. Turn off the Windows Firewall\n# 2. Join the computer to the domain in\
+      \ a pre-determined Organisational Unit\n\n# Create vRA Event Log Source\nNew-EventLog\
+      \ -LogName Application -Source \"vRealize Automation\" -ErrorAction SilentlyContinue\n\
+      Write-EventLog -LogName Application -Source \"vRealize Automation\" -EventId\
+      \ 999 -EntryType Information -Message \"Starting vRealize Automation Script,\
+      \ Pre-SQL Install.\"\n\n# Turn Firewall Off\nWrite-Output \"Attempting to turn\
+      \ off Windows Filewall for all Profiles\"\nSet-NetFirewallProfile -Profile *\
+      \ -Enabled False -Verbose\nWrite-Output \"Reporting back Profile status for\
+      \ logging\"\n$firewallstatus = Get-NetFirewallProfile | select Name, Enabled\
+      \ | ft | Out-String\n$firewallstatusmsg = \"Current Firewall Status: \" + $firewallstatus\n\
+      Write-EventLog -LogName Application -Source \"vRealize Automation\" -EventId\
+      \ 999 -EntryType Information -Message $firewallstatusmsg\n\n# Create Computer\
+      \ Object\n$domain = $AD_Domain\n$username = $AD_Username\n$password = $AD_Password\n\
+      $convertedpassword = $password | ConvertTo-SecureString -AsPlainText -Force\n\
+      $OUPath = $AD_OUPath\n\n$credential = New-Object System.Management.Automation.PSCredential($username,$convertedpassword)\n\
+      $domainjoinmsg = \"This computer will join $domain at $OUPath using account\
+      \ $username\"\nWrite-Output $domainjoinmsg\nWrite-EventLog -LogName Application\
+      \ -Source \"vRealize Automation\" -EventId 999 -EntryType Information -Message\
+      \ $domainjoinmsg\nAdd-Computer -DomainName $domain -Credential $credential -OUPath\
+      \ $OUPath\n\nWrite-Output \"Script Finished\"\nWrite-EventLog -LogName Application\
+      \ -Source \"vRealize Automation\" -EventId 999 -EntryType Information -Message\
+      \ \"Script Finished\"\n\n# END"
+    isRebootAfter: true
+    scriptTypeId: "powershell"
+  taskDescriptorRef:
+    id: "INSTALL"
+    label: "Install"

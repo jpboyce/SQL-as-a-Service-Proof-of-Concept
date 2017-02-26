@@ -1,0 +1,618 @@
+'@type': "SoftwareComponentType"
+createdDate: "2016-02-24T09:38:23.769Z"
+lastUpdated: "2016-02-26T14:16:17.548Z"
+id: "Software.SQLAASSQLUnattendedInstallation"
+name: "SQLAAS - SQL Unattended Installation"
+description: "Performs an unattended installation of SQL 2012 Server"
+publishStatus: "PUBLISHED"
+publishStatusName: "Published"
+schema:
+  fields:
+  - id: "SQL2012Source"
+    label: "SQL2012Source"
+    description: "Location of SQL Server 2012 Source Files"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "\\\\filesvr\\vRealize\\Servers\\SQL\\2012\\Enterprise\\11.00.3000"
+    isMultiValued: false
+  - id: "SQL_SQLSVCSTARTUPTYPE"
+    label: "SQL_SQLSVCSTARTUPTYPE"
+    description: "SQL Service Startup Behaviour"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "Automatic"
+    isMultiValued: false
+  - id: "SQL_INSTANCEID"
+    label: "SQL_INSTANCEID"
+    description: "Instance ID"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "SQLAAS_2012"
+    isMultiValued: false
+  - id: "SQL_INSTALLSHAREDWOWDIR"
+    label: "SQL_INSTALLSHAREDWOWDIR"
+    description: "Shared Folder Install Directory, 32-bit"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "D:\\Program Files (x86)\\Microsoft SQL Server"
+    isMultiValued: false
+  - id: "Win2012Source"
+    label: "Win2012Source"
+    description: "Location of Windows 2012 Source Files"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "\\\\filesvr\\vRealize\\OS\\Win2012R2"
+    isMultiValued: false
+  - id: "SQL_INSTALLSHAREDDIR"
+    label: "SQL_INSTALLSHAREDDIR"
+    description: "Shared Folder Install Directory, 64-bit"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "D:\\Program Files\\Microsoft SQL Server"
+    isMultiValued: false
+  - id: "SQL_INSTANCEDIR"
+    label: "SQL_INSTANCEDIR"
+    description: "Instance Directory"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "D:\\Program Files\\Microsoft SQL Server"
+    isMultiValued: false
+  - id: "AD_Password"
+    label: "AD_Password"
+    description: "Password"
+    dataType:
+      type: "primitive"
+      typeId: "SECURE_STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "secureString"
+            value: ""
+      - type: "encrypted"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+    isMultiValued: false
+  - id: "SQL_SECURITYMODE"
+    label: "SQL_SECURITYMODE"
+    description: "Security Mode"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "SQL"
+    isMultiValued: false
+  - id: "SQL_SQLSVCPASSWORD"
+    label: "SQL_SQLSVCPASSWORD"
+    description: "SQL Database Engine Service Account Password"
+    dataType:
+      type: "primitive"
+      typeId: "SECURE_STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "secureString"
+            value: ""
+      - type: "encrypted"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+    isMultiValued: false
+  - id: "host"
+    label: "Container"
+    description: ""
+    dataType:
+      type: "ref"
+      componentTypeId: "com.vmware.csp.iaas.blueprint.service"
+      classId: "Infrastructure.Machine.Schema"
+      label: "Machine"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "visible"
+        value:
+          type: "constantClause"
+          value:
+            type: "boolean"
+            value: false
+    isMultiValued: false
+  - id: "SQL_AGTSVCSTARTUPTYPE"
+    label: "SQL_AGTSVCSTARTUPTYPE"
+    description: "SQL Agent Service Startup Behaviour"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "Automatic"
+    isMultiValued: false
+  - id: "SQL_SQLSYSADMINACCOUNTS"
+    label: "SQL_SQLSYSADMINACCOUNTS"
+    description: "Security Group Added as SQL Admins"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "DOMAIN\\secgrp_SQL_Admins"
+    isMultiValued: false
+  - id: "FileSourceUser"
+    label: "FileSourceUser"
+    description: "Username for File Server"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "vRA"
+    isMultiValued: false
+  - id: "SQL_Features"
+    label: "SQL_Features"
+    description: "Features to be installed"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "SQLENGINE"
+    isMultiValued: false
+  - id: "SQL_BROWSERSVCSTARTUPTYPE"
+    label: "SQL_BROWSERSVCSTARTUPTYPE"
+    description: "SQL Browser Service Startup Behaviour"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "Automatic"
+    isMultiValued: false
+  - id: "AD_User"
+    label: "AD_User"
+    description: "User to perform the install under"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "contoso\\vRA-CL-Admin"
+    isMultiValued: false
+  - id: "SQL2012SetupEXE"
+    label: "SQL2012SetupEXE"
+    description: ""
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "\\\\filesvr\\vRealize\\Servers\\SQL\\2012\\Enterprise\\11.00.3000\\\
+              Setup.exe"
+    isMultiValued: false
+  - id: "FileSource"
+    label: "FileSource"
+    description: "File Server Location for install files"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "filesvr"
+    isMultiValued: false
+  - id: "FileSourcePassword"
+    label: "FileSourcePassword"
+    description: "Password for File Server"
+    dataType:
+      type: "primitive"
+      typeId: "SECURE_STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "secureString"
+            value: ""
+      - type: "encrypted"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+    isMultiValued: false
+  - id: "SQL_INSTANCENAME"
+    label: "SQL_INSTANCENAME"
+    description: "Instance Name"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "SQLAAS_2012"
+    isMultiValued: false
+  - id: "SQL_AGTSVCACCOUNT"
+    label: "SQL_AGTSVCACCOUNT"
+    description: "SQL Agent Service Account"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "DOMAIN\\SQLSVC-Agent"
+    isMultiValued: false
+  - id: "SQL_SQLCOLLATION"
+    label: "SQL_SQLCOLLATION"
+    description: "Default Collation"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "Latin1_General_CI_AS"
+    isMultiValued: false
+  - id: "SQL_SQLSVCACCOUNT"
+    label: "SQL_SQLSVCACCOUNT"
+    description: "SQL Database Engine Service Account Name"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "DOMAIN\\SQLSVC-DB"
+    isMultiValued: false
+  - id: "SQL_ADDCURRENTUSERASSQLADMIN"
+    label: "SQL_ADDCURRENTUSERASSQLADMIN"
+    description: "Add current user as admin"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "False"
+    isMultiValued: false
+  - id: "FileSourceRoot"
+    label: "FileSourceRoot"
+    description: "Root location for files"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "\\\\filesvr\\vRealize"
+    isMultiValued: false
+  - id: "SQL_AGTSVCPASSWORD"
+    label: "SQL_AGTSVCPASSWORD"
+    description: "SQL Agent Service Account Password"
+    dataType:
+      type: "primitive"
+      typeId: "SECURE_STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "secureString"
+            value: ""
+      - type: "encrypted"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+    isMultiValued: false
+containerFieldId: "host"
+lifecycleTasks:
+- createdDate: "2016-02-24T09:38:23.771Z"
+  lastUpdated: "2016-02-28T07:41:24.453Z"
+  script:
+    scriptContent: "# SQL 2012 Install\n\n$FileSourceRoot = $FileSourceRoot\n$FileSourceUser\
+      \ = $FileSourceUser\n$FileSourcePassword = \"Password123\"\n$Win2012Source =\
+      \ $Win2012Source\n$SQL2012SP1Source = $SQL2012Source\n$SQL2012Installer = \"\
+      $SQL2012SP1Source\\setup.exe\"\n$InstallDisk = \"D\"\n\n# SQL Install Settings\n\
+      $SQL_Features = $SQL_Features\n$SQL_INSTALLSHAREDDIR = $SQL_INSTALLSHAREDDIR\n\
+      $SQL_INSTALLSHAREDWOWDIR = $SQL_INSTALLSHAREDWOWDIR\n$SQL_INSTANCENAME=$SQL_INSTANCENAME\n\
+      $SQL_INSTANCEID=$SQL_INSTANCEID\n$SQL_INSTANCEDIR=$SQL_INSTANCEDIR\n# Agent\
+      \ Service Account Name\n$SQL_AGTSVCACCOUNT=$SQL_AGTSVCACCOUNT\n$SQL_AGTSVCPASSWORD=$SQL_AGTSVCPASSWORD\n\
+      $SQL_AGTSVCSTARTUPTYPE=\"Automatic\"\n$SQL_SQLSVCSTARTUPTYPE=\"Automatic\"\n\
+      $SQL_SQLCOLLATION=$SQL_SQLCOLLATION\n$SQL_SQLSVCACCOUNT=$SQL_SQLSVCACCOUNT\n\
+      $SQL_SQLSVCPASSWORD=$SQL_SQLSVCPASSWORD\n$SQL_SQLSYSADMINACCOUNTS=$SQL_SQLSYSADMINACCOUNTS\n\
+      $SQL_SECURITYMODE=$SQL_SECURITYMODE\n$SQL_ADDCURRENTUSERASSQLADMIN=\"False\"\
+      \n$SQL_BROWSERSVCSTARTUPTYPE=\"Automatic\"\n\n$SQLConfigFile = @'\n;SQL Server\
+      \ 2012 Configuration File\n[OPTIONS]\n; Required to acknowledge acceptance of\
+      \ the license terms.\nIACCEPTSQLSERVERLICENSETERMS=\"True\"\n; Specifies a Setup\
+      \ work flow, like INSTALL, UNINSTALL, or UPGRADE. This is a required parameter.\
+      \ \nACTION=\"Install\"\n; Detailed help for command line argument ENU has not\
+      \ been defined yet. \nENU=\"True\"\n; Parameter that controls the user interface\
+      \ behavior. Valid values are Normal for the full UI,AutoAdvance for a simplied\
+      \ UI, and EnableUIOnServerCore for bypassing Server Core setup GUI block. \n\
+      ;UIMODE=\"Normal\"\n; Setup will not display any user interface. \nQUIET=\"\
+      True\"\n; Setup will display progress only, without any user interaction. \n\
+      QUIETSIMPLE=\"False\"\n; Specify whether SQL Server Setup should discover and\
+      \ include product updates. The valid values are True and False or 1 and 0. By\
+      \ default SQL Server Setup will include updates that are found. \nUpdateEnabled=\"\
+      False\"\n; Specifies features to install, uninstall, or upgrade. The list of\
+      \ top-level features include SQL, AS, RS, IS, MDS, and Tools. The SQL feature\
+      \ will install the Database Engine, Replication, Full-Text, and Data Quality\
+      \ Services (DQS) server. The Tools feature will install Management Tools, Books\
+      \ online components, SQL Server Data Tools, and other shared components. \n\
+      FEATURES=SQLENGINE\n; Specify the location where SQL Server Setup will obtain\
+      \ product updates. The valid values are \"MU\" to search Microsoft Update, a\
+      \ valid folder path, a relative path such as .\\MyUpdates or a UNC share. By\
+      \ default SQL Server Setup will search Microsoft Update or a Windows Update\
+      \ service through the Window Server Update Services. \nUpdateSource=\"MU\"\n\
+      ; Displays the command line parameters usage \nHELP=\"False\"\n; Specifies that\
+      \ the detailed Setup log should be piped to the console. \nINDICATEPROGRESS=\"\
+      False\"\n; Specifies that Setup should install into WOW64. This command line\
+      \ argument is not supported on an IA64 or a 32-bit system. \nX86=\"False\"\n\
+      ; Specify the root installation directory for shared components.  This directory\
+      \ remains unchanged after shared components are already installed. \nINSTALLSHAREDDIR=\"\
+      [PH-INSTALLSHAREDDIR]\"\n\n; Specify the root installation directory for the\
+      \ WOW64 shared components.  This directory remains unchanged after WOW64 shared\
+      \ components are already installed. \nINSTALLSHAREDWOWDIR=\"[PH-INSTALLSHAREDWOWDIR]\"\
+      \n\n; Specify a default or named instance. MSSQLSERVER is the default instance\
+      \ for non-Express editions and SQLExpress for Express editions. This parameter\
+      \ is required when installing the SQL Server Database Engine (SQL), Analysis\
+      \ Services (AS), or Reporting Services (RS). \nINSTANCENAME=\"[PH-INSTANCENAME]\"\
+      \n\n; Specify the Instance ID for the SQL Server features you have specified.\
+      \ SQL Server directory structure, registry structure, and service names will\
+      \ incorporate the instance ID of the SQL Server instance. \nINSTANCEID=\"[PH-INSTANCEID]\"\
+      \n\n; Specify that SQL Server feature usage data can be collected and sent to\
+      \ Microsoft. Specify 1 or True to enable and 0 or False to disable this feature.\
+      \ \nSQMREPORTING=\"False\"\n; Specify if errors can be reported to Microsoft\
+      \ to improve future SQL Server releases. Specify 1 or True to enable and 0 or\
+      \ False to disable this feature. \nERRORREPORTING=\"False\"\n; Specify the installation\
+      \ directory. \nINSTANCEDIR=\"[PH-INSTANCEDIR]\"\n\n; Agent account name \nAGTSVCACCOUNT=\"\
+      [PH-AGTSVCACCOUNT]\"\nAGTSVCPASSWORD=\"[PH-AGTSVCPASSWORD]\"\n\n; Auto-start\
+      \ service after installation.  \nAGTSVCSTARTUPTYPE=\"Automatic\"\n\n; CM brick\
+      \ TCP communication port \nCOMMFABRICPORT=\"0\"\n; How matrix will use private\
+      \ networks \nCOMMFABRICNETWORKLEVEL=\"0\"\n; How inter brick communication will\
+      \ be protected \nCOMMFABRICENCRYPTION=\"0\"\n; TCP port used by the CM brick\
+      \ \nMATRIXCMBRICKCOMMPORT=\"0\"\n; Startup type for the SQL Server service.\
+      \ \nSQLSVCSTARTUPTYPE=\"Automatic\"\n; Level to enable FILESTREAM feature at\
+      \ (0, 1, 2 or 3). \nFILESTREAMLEVEL=\"0\"\n; Set to \"1\" to enable RANU for\
+      \ SQL Server Express. \nENABLERANU=\"False\"\n\n; Specifies a Windows collation\
+      \ or an SQL collation to use for the Database Engine. \nSQLCOLLATION=\"[PH-SQLCOLLATION]\"\
+      \n\n; Account for SQL Server service: Domain\\User or system account. \nSQLSVCACCOUNT=\"\
+      [PH-SQLSVCACCOUNT]\"\nSQLSVCPASSWORD=\"[PH-SQLSVCPASSWORD]\"\n\n; Windows account(s)\
+      \ to provision as SQL Server system administrators. \nSQLSYSADMINACCOUNTS=\"\
+      [PH-SQLSYSADMINACCOUNTS]\" \"contoso\\vRA-CL-Admin\"\n\n; The default is Windows\
+      \ Authentication. Use \"SQL\" for Mixed Mode Authentication. \n; SECURITYMODE=\"\
+      SQL\"\n; Provision current user as a Database Engine system administrator for\
+      \ SQL Server 2012 Express. \nADDCURRENTUSERASSQLADMIN=\"False\"\n; Specify 0\
+      \ to disable or 1 to enable the TCP/IP protocol. \nTCPENABLED=\"1\"\n; Specify\
+      \ 0 to disable or 1 to enable the Named Pipes protocol. \nNPENABLED=\"0\"\n\
+      ; Startup type for Browser Service. \nBROWSERSVCSTARTUPTYPE=\"Automatic\"\n\
+      '@\n\n$SQLConfigFile = $SQLConfigFile.Replace(\"[PH-INSTALLSHAREDDIR]\", $SQL_INSTALLSHAREDDIR)\n\
+      $SQLConfigFile = $SQLConfigFile.Replace(\"[PH-INSTALLSHAREDWOWDIR]\", $SQL_INSTALLSHAREDWOWDIR)\n\
+      $SQLConfigFile = $SQLConfigFile.Replace(\"[PH-INSTANCENAME]\", $SQL_INSTANCENAME)\n\
+      $SQLConfigFile = $SQLConfigFile.Replace(\"[PH-INSTANCEID]\", $SQL_INSTANCEID)\n\
+      $SQLConfigFile = $SQLConfigFile.Replace(\"[PH-INSTANCEDIR]\", $SQL_INSTANCEDIR)\n\
+      $SQLConfigFile = $SQLConfigFile.Replace(\"[PH-AGTSVCACCOUNT]\", $SQL_AGTSVCACCOUNT)\n\
+      $SQLConfigFile = $SQLConfigFile.Replace(\"[PH-AGTSVCPASSWORD]\", $SQL_AGTSVCPASSWORD)\n\
+      $SQLConfigFile = $SQLConfigFile.Replace(\"[PH-SQLCOLLATION]\", $SQL_SQLCOLLATION)\n\
+      $SQLConfigFile = $SQLConfigFile.Replace(\"[PH-SQLSVCACCOUNT]\", $SQL_SQLSVCACCOUNT)\n\
+      $SQLConfigFile = $SQLConfigFile.Replace(\"[PH-SQLSVCPASSWORD]\", $SQL_SQLSVCPASSWORD)\n\
+      $SQLConfigFile = $SQLConfigFile.Replace(\"[PH-SQLSYSADMINACCOUNTS]\", $SQL_SQLSYSADMINACCOUNTS)\n\
+      \n# $SQLConfigFileTimestamp = Get-date -UFormat \"%Y%m%d%H%M\"\n$SQLConfigFilename\
+      \ = \"c:\\SQLAAS.ini\"\nWrite-Output \"Configuration file will be located in\
+      \ $SQLConfigFilename\"\n$SQLConfigFile | Out-File $SQLConfigFilename\nWrite-Output\
+      \ \"Configuration file has been written out\"\n\n\n# Start SQL Install\nWrite-Output\
+      \ \"Starting SQL Installer...\"\n\n$AD_User = \"contoso\\vRA-CL-Admin\"      \
+      \                # User with rights to create the object\n$AD_Password = \"\
+      Password123\"                   # Password of the user\n$convertedpassword =\
+      \ $AD_Password | ConvertTo-SecureString -AsPlainText -Force\n$credential = New-Object\
+      \ System.Management.Automation.PSCredential($AD_User,$convertedpassword)\n\n\
+      $session = New-PSSession -ComputerName . -Credential $credential -EnableNetworkAccess\
+      \ -Authentication Credssp \n\nInvoke-Command -Session $session -ScriptBlock\
+      \ {\n\n#Write-Output \"Connecting to File Store on PSDrive X with user $args[1]\
+      \ to $args[3]\"\n$psdrivepassword = $args[2] | ConvertTo-SecureString -AsPlainText\
+      \ -Force\n$psdrivecredential = New-Object System.Management.Automation.PSCredential($args[1],$psdrivepassword)\n\
+      New-PSDrive -Name X -PSProvider FileSystem -Root $args[3] -Credential $psdrivecredential\
+      \ -Verbose\nGet-PSDrive -Verbose\n\nWrite-Output \"`nStarting SQL Install with\
+      \ Config File\"\n#write-output $args[4]\n#write-output $args[0]\n$starttime\
+      \ = get-date\nWrite-Output \"Starting at $starttime\"\n& $args[4] /ConfigurationFile=c:\\\
+      SQLAAS.ini | out-null\n$endtime = get-date\nWrite-Output \"Finished at $endtime\"\
+      \n} -ArgumentList $SQLConfigFilename, $FileSourceUser, $FileSourcePassword,\
+      \ $FileSourceRoot, $SQL2012Installer\n\n\n\n"
+    isRebootAfter: false
+    scriptTypeId: "powershell"
+  taskDescriptorRef:
+    id: "INSTALL"
+    label: "Install"

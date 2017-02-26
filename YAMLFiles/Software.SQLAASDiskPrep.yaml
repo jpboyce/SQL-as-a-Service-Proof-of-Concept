@@ -1,0 +1,110 @@
+'@type': "SoftwareComponentType"
+createdDate: "2016-02-13T00:35:39.662Z"
+lastUpdated: "2016-02-13T01:27:05.996Z"
+id: "Software.SQLAASDiskPrep"
+name: "SQLAAS Disk Prep"
+description: "Performs required disk operations on SQL As A Service (SQLAAS) nodes"
+publishStatus: "PUBLISHED"
+publishStatusName: "Published"
+schema:
+  fields:
+  - id: "Disk_SQLInstall_Letter"
+    label: "Disk_SQLInstall_Letter"
+    description: "Letter to assign to SQL Install disk"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "D"
+    isMultiValued: false
+  - id: "host"
+    label: "Container"
+    description: ""
+    dataType:
+      type: "ref"
+      componentTypeId: "com.vmware.csp.iaas.blueprint.service"
+      classId: "Infrastructure.Machine.Schema"
+      label: "Machine"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "visible"
+        value:
+          type: "constantClause"
+          value:
+            type: "boolean"
+            value: false
+    isMultiValued: false
+  - id: "Disk_SQLInstall_Label"
+    label: "Disk_SQLInstall_Label"
+    description: "Label to assign to SQL Install disk"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "SQL"
+    isMultiValued: false
+containerFieldId: "host"
+lifecycleTasks:
+- createdDate: "2016-02-13T00:35:39.677Z"
+  lastUpdated: "2016-02-13T06:35:43.989Z"
+  script:
+    scriptContent: "# SQLAAS Install Disk Prep\n# This script will create a partition\
+      \ on Disk 1 (SCSI ID) / VMDK 2 and format it\n# While the 2nd disk is added\
+      \ as part of the deployment, it doesn't seem to get formatted and assigned a\
+      \ disk letter\n# This script resolves that\n\n# Create Event Log Source\n# New-EventLog\
+      \ -LogName Application -Source \"vRealize Automation\" -ErrorAction SilentlyContinue\n\
+      \n# Setting variables\n$driveletter = $Disk_SQLInstall_Letter\n$drivelabel =\
+      \ $Disk_SQLInstall_Label\n\nWrite-Output \"SQLAAS Install Disk Prep Script starting...\"\
+      \n# Write-EventLog -LogName Application -Source \"vRealize Automation\" -EventId\
+      \ 999 -EntryType Information -Message \"Starting vRealize Automation Script,\
+      \ Disk Prep.\"\nWrite-Output \"This script will create a partition on Disk 0:1\
+      \ and assign a drive letter of $Disk_SQLInstall_Letter and a label of $Disk_SQLInstall_Label\"\
+      \n\nWrite-Output \"Initialising Disk 1..\"\nInitialize-Disk 1 -Verbose\n\nWrite-Output\
+      \ \"Creating Partition on Disk 1 and formatting...\"\nNew-Partition -DiskNumber\
+      \ 1 -UseMaximumSize -DriveLetter $driveletter -Verbose | Format-Volume -Force\
+      \ -FileSystem NTFS -NewFileSystemLabel $drivelabel -Confirm:$false -Verbose\n\
+      \n# Output Results\nWrite-Output \"\"\nWrite-Output \"------------------\"\n\
+      $partitionlist = Get-Partition -DiskNumber 1\nWrite-Output \"Partition List\"\
+      \nWrite-Output $partitionlist\n$volumelist = Get-Volume | Where-Object {$_.DriveLetter\
+      \ -ne 0}\nWrite-Output \"Volume List\"\nWrite-Output $volumelist\nWrite-Output\
+      \ \"SQLAAS Install Disk Prep Script finished.\"\n# Write-EventLog -LogName Application\
+      \ -Source \"vRealize Automation\" -EventId 999 -EntryType Information -Message\
+      \ \"SQLAAS Install Disk Prep Script finished.\"\n\n# END"
+    isRebootAfter: false
+    scriptTypeId: "powershell"
+  taskDescriptorRef:
+    id: "INSTALL"
+    label: "Install"

@@ -1,0 +1,287 @@
+'@type': "SoftwareComponentType"
+createdDate: "2016-02-19T00:17:16.398Z"
+lastUpdated: "2016-02-29T08:01:28.252Z"
+id: "Software.SQLAASCreateCluster"
+name: "SQLAAS - Create Cluster"
+description: "Creates a Windows Failover Cluster and sets the quorum settings."
+publishStatus: "PUBLISHED"
+publishStatusName: "Published"
+schema:
+  fields:
+  - id: "ClusterObjectGroup"
+    label: "ClusterObjectGroup"
+    description: "Group that has rights to create cluster objects"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: ""
+    isMultiValued: false
+  - id: "sqlnode_names"
+    label: "sqlnode_names"
+    description: "Names of the SQL Nodes"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "multiple"
+            elementTypeId: "STRING"
+            items:
+            - type: "string"
+              value: ""
+    isMultiValued: true
+  - id: "AD_User"
+    label: "AD_User"
+    description: "AD User with the rights to create the cluster"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: ""
+    isMultiValued: false
+  - id: "AD_OU"
+    label: "AD_OU"
+    description: "Location to create the cluster object"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "OU=Clusters,OU=vRealize,DC=contoso,DC=com"
+    isMultiValued: false
+  - id: "fswnode_name"
+    label: "fswnode_name"
+    description: "Name of the File Share Witness"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: ""
+    isMultiValued: false
+  - id: "host"
+    label: "Container"
+    description: ""
+    dataType:
+      type: "ref"
+      componentTypeId: "com.vmware.csp.iaas.blueprint.service"
+      classId: "Infrastructure.Machine.Schema"
+      label: "Machine"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "visible"
+        value:
+          type: "constantClause"
+          value:
+            type: "boolean"
+            value: false
+    isMultiValued: false
+  - id: "AD_Password"
+    label: "AD_Password"
+    description: "AD User Password"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: ""
+    isMultiValued: false
+  - id: "DNS_Server"
+    label: "DNS_Server"
+    description: "DNS server"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: ""
+    isMultiValued: false
+  - id: "FSW_Share"
+    label: "FSW_Share"
+    description: "Share Folder for the FSW"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: ""
+    isMultiValued: false
+containerFieldId: "host"
+lifecycleTasks:
+- createdDate: "2016-02-19T02:24:58.878Z"
+  lastUpdated: "2016-03-03T02:35:08.076Z"
+  script:
+    scriptContent: "# Create Windows Clustering Service Cluster\n\n# Variables\n$ClusterIP\
+      \ = Get-Content -Path C:\\ClusterIP.txt\n$ClusterIP = $ClusterIP.ToString()\n\
+      $SQL_Node_array = @(\"\")\n$SQL_Node_String = \"\"\n$SQL_Node_array = $sqlnode_names\n\
+      # We need to change the SQL node names to FQDN format\nfor ($i=0; $i -le $SQL_Node_array.Length-1;\
+      \ $i++)\n{\n    $SQL_Node_array[$i] = $SQL_Node_array[$i]+\".contoso.com\"\n\
+      }\n$SQL_Node_array | %{$SQL_Node_String += ($(if($SQL_Node_String){\",\"}) +\
+      \ $_ + $t)}   # Convert the SQL node array to a comma seperated string for easier\
+      \ handling later on\n$FSW_Node = $fswnode_name                   # File Share\
+      \ Witness Node Name\n# We need to change the FSW Node to FQDN format\n$FSW_Node.Trim()\n\
+      $FSW_Node = $FSW_Node.Replace(\"\\s\",\"\")\n$FSW_Node = $FSW_Node.Replace(\"\
+      \ \",\"\")\n$FSW_Node = $FSW_Node+\".contoso.com\"\n$FSW_Share = $FSW_Share\n\
+      $AD_OU = $AD_OU                        # OU to create the cluster object\n$AD_Domain\
+      \ =   \"contoso.com\"                  # Domain to create the object in\n$AD_User\
+      \ = $AD_User                      # User with rights to create the object\n\
+      $AD_Password = $AD_Password                   # Password of the user\n$DNS_Server\
+      \ = $DNS_Server\n\n$convertedpassword = $AD_Password | ConvertTo-SecureString\
+      \ -AsPlainText -Force\n$credential = New-Object System.Management.Automation.PSCredential($AD_User,$convertedpassword)\n\
+      \n# Install AD Powershell\nWrite-Output \"`nInstalling AD Powershell...\"\n\
+      Install-WindowsFeature -Name RSAT-AD-PowerShell -Verbose\n# Generate randomised\
+      \ cluster name\n# Going to use GUID function for this\n$guid = [GUID]::NewGuid()\n\
+      $guid = $guid.ToString()\n$guid = $guid.Split(\"-\")\n$clustername = \"C_\"\
+      + $guid[4]     # You can change this prefix.  The [4] block gives 12 characters,\
+      \ so your prefix probably should be limited to 3 characters\n$ClusterNameFQDN\
+      \ = $clustername+\".contoso.com\"\n$ClusterNameFQDN | Out-File c:\\ClusterName.txt\n\
+      $clusterName | Out-File C:\\ClusterShortName.txt\n\n# Create Cluster\n$Cluster_DN\
+      \ = \"CN=$clustername,$AD_OU\"\nWrite-Output \"`nThe Cluster will be created\
+      \ as $Cluster_DN with SQL Nodes $SQL_Node_array and FSW Node $FSW_Node\"\nWrite-Output\
+      \ \"Starting cluster creation...\"\nWrite-Output \"Connecting PS Session to\
+      \ $FSW_Node\"\n$session = New-PSSession -ComputerName $FSW_Node -Credential\
+      \ $credential -EnableNetworkAccess -Authentication Credssp \nWrite-Output \"\
+      Creating Cluster...\"\nInvoke-Command -Session $session -ScriptBlock {New-Cluster\
+      \ -Name $args[0] -Node $args[1] -AdministrativeAccessPoint ActiveDirectoryAndDns\
+      \ -StaticAddress $args[2] -NoStorage -Verbose | Out-File -FilePath C:\\CreateClusterResult.txt\
+      \ } -ArgumentList $Cluster_DN, $SQL_Node_array, $ClusterIP\nWrite-Output \"\
+      `nCreating DNS record, A Record for $ClusterName on IP $ClusterIP on DNS server\
+      \ $DNS_Server for DNS Zone $AD_Domain\"\nInvoke-Command -Session $session -ScriptBlock\
+      \ {Add-DnsServerResourceRecordA -Name $args[0] -ZoneName $args[1] -IPv4Address\
+      \ $args[2] -ComputerName $args[3] -Verbose  | Out-File -FilePath C:\\CreateDNSResult.txt\
+      \ } -ArgumentList $ClusterName,$AD_Domain,$ClusterIP,$DNS_Server\n#New-Cluster\
+      \ -Name $Cluster_DN -Node $SQL_Node_String -AdministrativeAccessPoint ActiveDirectoryAndDns\
+      \ -NoStorage -whatif -Verbose\n#Get-PSSession | Remove-PSSession\n\nWrite-Output\
+      \ \"`n----------------------------------------------------------------------------------------------------------\"\
+      \n"
+    isRebootAfter: true
+    scriptTypeId: "powershell"
+  taskDescriptorRef:
+    id: "INSTALL"
+    label: "Install"
+- createdDate: "2016-02-29T11:42:05.356Z"
+  lastUpdated: "2016-03-03T02:35:08.076Z"
+  script:
+    scriptContent: "$AD_User = $AD_User                      # User with rights to\
+      \ create the object\n$AD_Password = $AD_Password                   # Password\
+      \ of the user\n$FSW_Node = $fswnode_name                   # File Share Witness\
+      \ Node Name\n# We need to change the FSW Node to FQDN format\n$FSW_Node.Trim()\n\
+      $FSW_Node = $FSW_Node.Replace(\"\\s\",\"\")\n$FSW_Node = $FSW_Node.Replace(\"\
+      \ \",\"\")\n$FSW_Node = $FSW_Node+\".contoso.com\"\n\n$convertedpassword = $AD_Password\
+      \ | ConvertTo-SecureString -AsPlainText -Force\n$credential = New-Object System.Management.Automation.PSCredential($AD_User,$convertedpassword)\n\
+      \n$session = New-PSSession -ComputerName $FSW_Node -Credential $credential -EnableNetworkAccess\
+      \ -Authentication Credssp \n\n$ClusterName = Get-Content -Path c:\\ClusterName.txt\n\
+      $ClusterSplit = $ClusterName.Split(\"`.\")\n\n$ClusterShortName = $ClusterSplit[0]\n\
+      Write-Output \"Cluster Short Name is $ClusterShortName\"\n\n$ClusterObjectDN\
+      \ = \"CN=$ClusterName,OU=Clusters,OU=vRealize,DC=contoso,DC=com\"\n$ClusterGroupDN\
+      \ = \"CN=Create Computer Objects,OU=Groups,OU=vRealize,DC=contoso,DC=com\"\n\
+      Write-Output \"`nAdding Cluster Object $ClusterShortName to AD Group $ClusterGroupDN\"\
+      \n\nInvoke-Command -Session $session -ScriptBlock { \n\t#Write-Output $args[0]\n\
+      \t#Write-Output $args[1]\n\t$group = Get-ADGroup $args[0] -Verbose\n\t$comp\
+      \ = Get-ADComputer $args[1] -Verbose\nwrite-output \"`nAdding group member now...\"\
+      \nAdd-ADGroupMember $group -members (Get-ADComputer $args[1]) -Verbose\nwrite-output\
+      \ \"Group membership completed\" } -ArgumentList $ClusterGroupDN,$ClusterShortName"
+    isRebootAfter: false
+    scriptTypeId: "powershell"
+  taskDescriptorRef:
+    id: "CONFIGURE"
+    label: "Configure"

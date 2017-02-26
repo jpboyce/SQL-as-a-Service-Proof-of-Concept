@@ -1,0 +1,244 @@
+'@type': "SoftwareComponentType"
+createdDate: "2016-02-16T11:15:45.589Z"
+lastUpdated: "2016-02-16T13:00:05.516Z"
+id: "Software.IPAMGetNextFreeIPandAssign"
+name: "IPAM - Get Next Free IP and Assign"
+description: "Queries an IP server for the next free IP in a defined IPAM pool and\
+  \ assigns it."
+publishStatus: "PUBLISHED"
+publishStatusName: "Published"
+schema:
+  fields:
+  - id: "IPAM_devicename"
+    label: "IPAM_devicename"
+    description: "Name of the device that the entry is for (ie. hostname)"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: ""
+    isMultiValued: false
+  - id: "IPAM_forwardlookupserver"
+    label: "IPAM_forwardlookupserver"
+    description: "DNS server of the Lookup Zone"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: ""
+    isMultiValued: false
+  - id: "IPAM_Server"
+    label: "IPAM_Server"
+    description: "IPAM Server Name/IP"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: ""
+    isMultiValued: false
+  - id: "IPAM_username"
+    label: "IPAM_username"
+    description: "Username that IPAM operations run under"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: ""
+    isMultiValued: false
+  - id: "IPAM_Password"
+    label: "IPAM_Password"
+    description: "Password of IPAM user"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "editable"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "encrypted"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: false
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: ""
+    isMultiValued: false
+  - id: "IPAM_forwardlookupzone"
+    label: "IPAM_forwardlookupzone"
+    description: "Forward Lookup DNS zone"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: ""
+    isMultiValued: false
+  - id: "host"
+    label: "Container"
+    description: ""
+    dataType:
+      type: "ref"
+      componentTypeId: "com.vmware.csp.iaas.blueprint.service"
+      classId: "Infrastructure.Machine.Schema"
+      label: "Machine"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "visible"
+        value:
+          type: "constantClause"
+          value:
+            type: "boolean"
+            value: false
+    isMultiValued: false
+  - id: "IPAM_ConnectionURI"
+    label: "IPAM_ConnectionURI"
+    description: "Connection URI for IPAM server WinRM"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: ""
+    isMultiValued: false
+containerFieldId: "host"
+lifecycleTasks:
+- createdDate: "2016-02-16T11:15:45.590Z"
+  lastUpdated: "2016-02-29T04:09:20.476Z"
+  script:
+    scriptContent: "# IPAM Query and Assignment Script\n# This script will perform\
+      \ the following:\n# 1. Create a remote powershell session to the IPAM server\n\
+      # 2. Query the vRealize IP pool for the next available address\n# 3. Create\
+      \ an assignment in IPAM for this address\n#\n# This allows the safe and automated\
+      \ allocation of IPs for the SQL-as-a-service cluster object\n\nWrite-Output\
+      \ \"Initialising variables...\"\nWrite-Output \"\"\n$Server = $IPAM_Server\n\
+      $connectionURI = $IPAM_ConnectionURI\n$Password = $IPAM_Password\n$username\
+      \ = $IPAM_username\n$convertedpassword = $password | ConvertTo-SecureString\
+      \ -AsPlainText -Force\n$credential = New-Object System.Management.Automation.PSCredential($username,$convertedpassword)\n\
+      $devicename = $IPAM_devicename\n$forwardlookupzone = $IPAM_forwardlookupzone\n\
+      $forwardlookupserver = $IPAM_forwardlookupserver\n$SessionOptions = New-PSSessionOption\
+      \ –SkipCACheck –SkipCNCheck –SkipRevocationCheck\n\nWrite-Output \"Creating\
+      \ Powershell session to IPAM server...\"\n$session = New-PSSession -Credential\
+      \ $credential -ConnectionUri $connectionURI –SessionOption $SessionOptions\n\
+      write-output \"Active Sessions\"\nGet-PSSession\n\nWrite-Output \"Retrieving\
+      \ next free IP address for Cluster Object...\"\n$freeIP = Invoke-Command -Session\
+      \ $session -ScriptBlock { Get-IpamRange -AddressFamily IPv4  | where {$_.owner\
+      \ -eq \"vRealize\"} | Find-IpamFreeAddress | Select-Object -ExpandProperty IPAddress\
+      \ } \nWrite-Output \"The next free IP is: \" $freeip.IPAddressToString\n$IPAMAddress\
+      \ = $freeip.IPAddressToString\nWrite-Output \"Adding assignment of IP address\
+      \ $IPAMAddress ...\"\nInvoke-Command -Session $session -ScriptBlock { Add-IpamAddress\
+      \ -IpAddress $args[0] -DeviceName $args[1]  -AssignmentType Static -Description\
+      \ \"SQLAAS Cluster Object\" -Owner \"vRealize\" -ForwardLookupZone $args[2]\
+      \ -ForwardLookupPrimaryServer $args[3] -PassThru -Verbose } -ArgumentList $IPAMAddress,$devicename,$forwardlookupzone,$forwardlookupserver\
+      \ \nWrite-Output \"Writing out IP $IPAMAddress  value to temp folder\"\n$IPAMAddress\
+      \  | Out-File c:\\ClusterIP.txt\n\nWrite-Output \"Retrieving next free IP address\
+      \ for Cluster Listener Object...\"\n$freeIP2 = Invoke-Command -Session $session\
+      \ -ScriptBlock { Get-IpamRange -AddressFamily IPv4  | where {$_.owner -eq \"\
+      vRealize\"} | Find-IpamFreeAddress | Select-Object -ExpandProperty IPAddress\
+      \ } \nWrite-Output \"The next free IP is: \" $freeip2.IPAddressToString\n$IPAMAddress2\
+      \ = $freeip2.IPAddressToString\nWrite-Output \"Adding assignment of IP address\
+      \ $IPAMAddress2...\"\nInvoke-Command -Session $session -ScriptBlock { Add-IpamAddress\
+      \ -IpAddress $args[0] -DeviceName $args[1]  -AssignmentType Static -Description\
+      \ \"SQLAAS Cluster Listener Object\" -Owner \"vRealize\" -ForwardLookupZone\
+      \ $args[2] -ForwardLookupPrimaryServer $args[3] -PassThru -Verbose } -ArgumentList\
+      \ $IPAMAddress2,$devicename,$forwardlookupzone,$forwardlookupserver \nWrite-Output\
+      \ \"Writing out IP value $IPAMAddress2 to temp folder\"\n$IPAMAddress2 | Out-File\
+      \ c:\\ClusterListenerIP.txt\n\nWrite-Output \"Closing Powershell session\"\n\
+      Get-PSSession | Remove-PSSession -Verbose\n# END"
+    isRebootAfter: false
+    scriptTypeId: "powershell"
+  taskDescriptorRef:
+    id: "INSTALL"
+    label: "Install"

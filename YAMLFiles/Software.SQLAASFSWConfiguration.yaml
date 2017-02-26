@@ -1,0 +1,162 @@
+'@type': "SoftwareComponentType"
+createdDate: "2016-02-13T08:20:11.779Z"
+lastUpdated: "2016-02-19T00:26:43.362Z"
+id: "Software.SQLAASFSWConfiguration"
+name: "SQLAAS - FSW Configuration"
+description: "Configures the Share on the FSW server"
+publishStatus: "PUBLISHED"
+publishStatusName: "Published"
+schema:
+  fields:
+  - id: "sqlnode_ips"
+    label: "sqlnode_ips"
+    description: "IP addresses of the SQL Nodes"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "multiple"
+            elementTypeId: "STRING"
+            items:
+            - type: "string"
+              value: "None"
+    isMultiValued: true
+  - id: "AD_User"
+    label: "AD_User"
+    description: "AD Account"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "contoso\\vRA-CL-Admin"
+    isMultiValued: false
+  - id: "host"
+    label: "Container"
+    description: ""
+    dataType:
+      type: "ref"
+      componentTypeId: "com.vmware.csp.iaas.blueprint.service"
+      classId: "Infrastructure.Machine.Schema"
+      label: "Machine"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "visible"
+        value:
+          type: "constantClause"
+          value:
+            type: "boolean"
+            value: false
+    isMultiValued: false
+  - id: "AD_Password"
+    label: "AD_Password"
+    description: "AD Password"
+    dataType:
+      type: "primitive"
+      typeId: "SECURE_STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "secureString"
+            value: ""
+      - type: "encrypted"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+    isMultiValued: false
+  - id: "sqlnode_hosts"
+    label: "sqlnode_hosts"
+    description: "Hostnames of the SQL Nodes"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "multiple"
+            elementTypeId: "STRING"
+            items:
+            - type: "string"
+              value: "None"
+    isMultiValued: true
+containerFieldId: "host"
+lifecycleTasks:
+- createdDate: "2016-02-13T08:20:11.780Z"
+  lastUpdated: "2016-02-23T11:57:53.782Z"
+  script:
+    scriptContent: "# File Share Witness Config\n\n$FSW_Local_Path = \"C:\\FSW\\\"\
+      \n$FSW_Share_Name = \"FSW\"\n$FSW_Share_Users = \"\"\n$FSW_Share_Users_List\
+      \ = \"\"\n$FSW_Share_Users = \"Users\"\n$FSW_NTFS_Users = $sqlnode_hosts\n$AD_User\
+      \ = $AD_User\n$AD_Password = $AD_Password\n\nWrite-Output \"The SQL Nodes IPs\
+      \ are:\"\nWrite-Output $sqlnode_ips\n\nWrite-Output \"The SQL Nodes Names are:\"\
+      \nWrite-Output $sqlnode_hosts\n\n# Creat FSW Folder\nWrite-Output \"`nCreating\
+      \ $FSW_Local_Path\"\nNew-Item -ItemType Directory -Path $FSW_Local_Path\n\n\
+      # Create File Share\nWrite-Output \"`nCreating File Share $FSW_Share_Name at\
+      \ $FSW_Local_Path with Full Access for $FSW_Share_Users\"\nNew-SmbShare -Name\
+      \ $FSW_Share_Name -Path $FSW_Local_Path -Description \"File Share Witness Share\"\
+      \ -FullAccess $FSW_Share_Users\n\n# Grant SQL Computer Accounts full NTFS Access\
+      \ to Share Local Path\nWrite-Output \"`nGranting SQL Servers access to NTFS...\"\
+      \n$FSW_Local_Path_ACL = (Get-Item -Path $FSW_Local_Path).GetAccessControl('Access')\n\
+      foreach ($user in $FSW_Share_Users)\n    {\n    $FSW_Local_Path_ACL_Rule = New-Object\
+      \ System.Security.AccessControl.FileSystemAccessRule($user, 'FullControl', 'ContainerInherit,ObjectInherit',\
+      \ 'None', 'Allow')\n    $FSW_Local_Path_ACL.SetAccessRule($FSW_Local_Path_ACL_Rule)\n\
+      \    Set-Acl -Path $FSW_Local_Path -AclObject $FSW_Local_Path_ACL -Verbose\n\
+      \n    }\n\n\nInstall-WindowsFeature -Name \"RSAT-DNS-Server\" -Verbose"
+    isRebootAfter: false
+    scriptTypeId: "powershell"
+  taskDescriptorRef:
+    id: "INSTALL"
+    label: "Install"

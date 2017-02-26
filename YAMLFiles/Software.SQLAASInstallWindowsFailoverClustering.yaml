@@ -1,0 +1,52 @@
+'@type': "SoftwareComponentType"
+createdDate: "2016-02-18T16:35:35.604Z"
+lastUpdated: "2016-02-18T17:00:05.320Z"
+id: "Software.SQLAASInstallWindowsFailoverClustering"
+name: "SQLAAS - Install Windows Failover Clustering"
+description: "Installs the components for Windows Failover Clustering."
+publishStatus: "PUBLISHED"
+publishStatusName: "Published"
+schema:
+  fields:
+  - id: "host"
+    label: "Container"
+    description: ""
+    dataType:
+      type: "ref"
+      componentTypeId: "com.vmware.csp.iaas.blueprint.service"
+      classId: "Infrastructure.Machine.Schema"
+      label: "Machine"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "visible"
+        value:
+          type: "constantClause"
+          value:
+            type: "boolean"
+            value: false
+    isMultiValued: false
+containerFieldId: "host"
+lifecycleTasks:
+- createdDate: "2016-02-18T16:35:35.604Z"
+  lastUpdated: "2016-02-18T17:00:05.320Z"
+  script:
+    scriptContent: "# Install Windows Failover Clustering\n# This will install the\
+      \ Windows Failover Clustering components on the system\n\n# Check State for\
+      \ logging\nwrite-host \"Checking component status...\"\nGet-WindowsFeature -Name\
+      \ \"Failover-clustering\" -Verbose\n\n# Start Install\nwrite-host \"`nStarting\
+      \ installation....\"\nInstall-WindowsFeature -Name Failover-Clustering -IncludeAllSubFeature\
+      \ -IncludeManagementTools -Verbose\n\n# Re-running check for logging\nwrite-host\
+      \ \"Checking status again...\"\nGet-WindowsFeature -Name \"Failover-clustering\"\
+      \ -Verbose"
+    isRebootAfter: false
+    scriptTypeId: "powershell"
+  taskDescriptorRef:
+    id: "INSTALL"
+    label: "Install"

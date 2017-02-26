@@ -1,0 +1,296 @@
+'@type': "SoftwareComponentType"
+createdDate: "2016-02-27T01:50:17.657Z"
+lastUpdated: "2016-02-27T02:58:28.512Z"
+id: "Software.SQLAASInstallSQLPowershell"
+name: "SQLAAS - Install SQL Powershell"
+publishStatus: "PUBLISHED"
+publishStatusName: "Published"
+schema:
+  fields:
+  - id: "SQL2012Source"
+    label: "SQL2012Source"
+    description: "Location of SQL Server 2012 Files"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "\\\\filesvr\\vRealize\\Servers\\SQL\\2012\\Enterprise\\11.00.3000"
+    isMultiValued: false
+  - id: "FileSourceUser"
+    label: "FileSourceUser"
+    description: "User account to access the install files"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "vRA"
+    isMultiValued: false
+  - id: "fsw_node"
+    label: "fsw_node"
+    description: ""
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: ""
+    isMultiValued: false
+  - id: "SQL2012SetupEXE"
+    label: "SQL2012SetupEXE"
+    description: ""
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "\\\\filesvr\\vRealize\\Servers\\SQL\\2012\\Enterprise\\11.00.3000\\\
+              Setup.exe"
+    isMultiValued: false
+  - id: "AD_User"
+    label: "AD_User"
+    description: ""
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "contoso\\vRA-CL-Admin"
+    isMultiValued: false
+  - id: "FileSourcePassword"
+    label: "FileSourcePassword"
+    description: "Password for file source account"
+    dataType:
+      type: "primitive"
+      typeId: "SECURE_STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "secureString"
+            value: ""
+      - type: "encrypted"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+    isMultiValued: false
+  - id: "host"
+    label: "Container"
+    description: ""
+    dataType:
+      type: "ref"
+      componentTypeId: "com.vmware.csp.iaas.blueprint.service"
+      classId: "Infrastructure.Machine.Schema"
+      label: "Machine"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "visible"
+        value:
+          type: "constantClause"
+          value:
+            type: "boolean"
+            value: false
+    isMultiValued: false
+  - id: "FileSourceRoot"
+    label: "FileSourceRoot"
+    description: "Root UNC Path"
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "\\\\filesvr\\vRealize"
+    isMultiValued: false
+  - id: "AD_Password"
+    label: "AD_Password"
+    description: ""
+    dataType:
+      type: "primitive"
+      typeId: "SECURE_STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "secureString"
+            value: ""
+      - type: "encrypted"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+    isMultiValued: false
+containerFieldId: "host"
+lifecycleTasks:
+- createdDate: "2016-02-28T05:44:02.494Z"
+  lastUpdated: "2016-02-28T05:44:02.494Z"
+  script:
+    scriptContent: "Write-Output \"`nChecking Powershell Cmdlets...\"\nGet-Module\
+      \ -ListAvailable"
+    isRebootAfter: false
+    scriptTypeId: "powershell"
+  taskDescriptorRef:
+    id: "CONFIGURE"
+    label: "Configure"
+- createdDate: "2016-02-27T02:02:48.184Z"
+  lastUpdated: "2016-02-28T05:44:02.900Z"
+  script:
+    scriptContent: "# Install SQL Powershell \n\n$FileSourceUser = $FileSourceUser\n\
+      $FileSourcePassword = \"Password123\"\n$SQL2012SP1Source = $SQL2012Source\n\
+      $SQL2012Installer = \"$SQL2012SP1Source\\setup.exe\"\n\n# Generate the Config\
+      \ File\n$SQLConfigFile = @'\n;SQL Server 2012 Configuration File\n[OPTIONS]\n\
+      ; Required to acknowledge acceptance of the license terms.\nIACCEPTSQLSERVERLICENSETERMS=\"\
+      True\"\n; Specifies a Setup work flow, like INSTALL, UNINSTALL, or UPGRADE.\
+      \ This is a required parameter. \nACTION=\"Install\"\n; Detailed help for command\
+      \ line argument ENU has not been defined yet. \nENU=\"True\"\n; Parameter that\
+      \ controls the user interface behavior. Valid values are Normal for the full\
+      \ UI,AutoAdvance for a simplied UI, and EnableUIOnServerCore for bypassing Server\
+      \ Core setup GUI block. \n;UIMODE=\"Normal\"\n; Setup will not display any user\
+      \ interface. \nQUIET=\"True\"\n; Setup will display progress only, without any\
+      \ user interaction. \nQUIETSIMPLE=\"False\"\n; Specify whether SQL Server Setup\
+      \ should discover and include product updates. The valid values are True and\
+      \ False or 1 and 0. By default SQL Server Setup will include updates that are\
+      \ found. \nUpdateEnabled=\"False\"\n; Specifies features to install, uninstall,\
+      \ or upgrade. The list of top-level features include SQL, AS, RS, IS, MDS, and\
+      \ Tools. The SQL feature will install the Database Engine, Replication, Full-Text,\
+      \ and Data Quality Services (DQS) server. The Tools feature will install Management\
+      \ Tools, Books online components, SQL Server Data Tools, and other shared components.\
+      \ \nFEATURES=SSMS\n; Specify the location where SQL Server Setup will obtain\
+      \ product updates. The valid values are \"MU\" to search Microsoft Update, a\
+      \ valid folder path, a relative path such as .\\MyUpdates or a UNC share. By\
+      \ default SQL Server Setup will search Microsoft Update or a Windows Update\
+      \ service through the Window Server Update Services. \nUpdateSource=\"MU\"\n\
+      ; Displays the command line parameters usage \nHELP=\"False\"\n; Specifies that\
+      \ the detailed Setup log should be piped to the console. \nINDICATEPROGRESS=\"\
+      False\"\n; Specifies that Setup should install into WOW64. This command line\
+      \ argument is not supported on an IA64 or a 32-bit system. \nX86=\"False\"\n\
+      ; Specify the root installation directory for shared components.  This directory\
+      \ remains unchanged after shared components are already installed. \nINSTALLSHAREDDIR=\"\
+      C:\\Program Files\\Microsoft SQL Server\"\n; Specify the root installation directory\
+      \ for the WOW64 shared components.  This directory remains unchanged after WOW64\
+      \ shared components are already installed. \nINSTALLSHAREDWOWDIR=\"C:\\Program\
+      \ Files (x86)\\Microsoft SQL Server\"\n; Specify that SQL Server feature usage\
+      \ data can be collected and sent to Microsoft. Specify 1 or True to enable and\
+      \ 0 or False to disable this feature. \nSQMREPORTING=\"False\"\n; Specify if\
+      \ errors can be reported to Microsoft to improve future SQL Server releases.\
+      \ Specify 1 or True to enable and 0 or False to disable this feature. \nERRORREPORTING=\"\
+      False\"\n; Specify the installation directory. \nINSTANCEDIR=\"C:\\Program Files\\\
+      Microsoft SQL Server\"\n'@\n\n$SQLConfigFilename = \"c:\\SQLAAS.ini\"\nWrite-Output\
+      \ \"Configuration file will be located in $SQLConfigFilename\"\n$SQLConfigFile\
+      \ | Out-File $SQLConfigFilename\nWrite-Output \"Configuration file has been\
+      \ written out\"\n\n$AD_User = $AD_User                      # User with rights\
+      \ to create the object\n$AD_Password = $AD_Password                   # Password\
+      \ of the user\n$convertedpassword = $AD_Password | ConvertTo-SecureString -AsPlainText\
+      \ -Force\n$credential = New-Object System.Management.Automation.PSCredential($AD_User,$convertedpassword)\n\
+      \n$session = New-PSSession -ComputerName $fsw_node -Credential $credential -EnableNetworkAccess\
+      \ -Authentication Credssp \n\nInvoke-Command -Session $session -ScriptBlock\
+      \ {\n\n#Write-Output \"Connecting to File Store on PSDrive X with user $args[1]\
+      \ to $args[3]\"\n$psdrivepassword = $args[2] | ConvertTo-SecureString -AsPlainText\
+      \ -Force\n$psdrivecredential = New-Object System.Management.Automation.PSCredential($args[1],$psdrivepassword)\n\
+      New-PSDrive -Name X -PSProvider FileSystem -Root $args[3] -Credential $psdrivecredential\
+      \ -Verbose\nGet-PSDrive -Verbose\n\nWrite-Output \"`nStarting SQL Install with\
+      \ Config File\"\n#write-output $args[4]\n#write-output $args[0]\n$starttime\
+      \ = get-date\nWrite-Output \"Starting at $starttime\"\n& $args[4] /ConfigurationFile=c:\\\
+      SQLAAS.ini | out-null\n$endtime = get-date\nWrite-Output \"Finished at $endtime\"\
+      \n} -ArgumentList $SQLConfigFilename, $FileSourceUser, $FileSourcePassword,\
+      \ $FileSourceRoot, $SQL2012Installer\n\nWrite-Output \"`nChecking Powershell\
+      \ Cmdlets...\"\nGet-Module -ListAvailable\n\n"
+    isRebootAfter: true
+    scriptTypeId: "powershell"
+  taskDescriptorRef:
+    id: "INSTALL"
+    label: "Install"
