@@ -1,0 +1,467 @@
+id: SQL2012AsAService
+name: SQL 2012 As A Service
+description: SQL 2012 As A Service - 2 node Always-on Availability Group using File share Witness.
+status: PUBLISHED
+components:
+  FSWAD_1:
+    type: Software.JointoActiveDirectory
+    dependsOn:
+    - SQLDiskPrep_1
+    data:
+      AD_Domain:
+        default: contoso.com
+        required: true
+      AD_OUPath:
+        default: OU=Computers,OU=vRealize,DC=contoso,DC=com
+        required: true
+      AD_Password:
+        default: Password123
+        required: true
+        secured: true
+      AD_Username:
+        default: contoso\vRA-Dom-Join
+        required: true
+      host: ${_resource~fsw-node}
+  FSWConfig_1:
+    type: Software.SQLAASFSWConfiguration
+    dependsOn:
+    - FSWAD_1
+    data:
+      AD_Password:
+        default: Password123
+        required: true
+        secured: true
+      AD_User:
+        default: contoso\vRA-CL-Admin
+        required: true
+      host: ${_resource~fsw-node}
+      sql_node_ips:
+        default:
+        - None
+        required: true
+      sqlnode_hosts:
+        fixed: ${_resource~sql-node~MachineName}
+        required: true
+      sqlnode_ips:
+        fixed: ${_resource~sql-node~ip_address}
+        required: true
+        visible: true
+  IPAM_-_Get_Next_Free_IP_and_Assign_1:
+    type: Software.IPAMGetNextFreeIPandAssign
+    dependsOn:
+    - FSWConfig_1
+    data:
+      IPAM_ConnectionURI:
+        default: https://ipamsvr.contoso.com:5986/WSMAN
+        required: true
+      IPAM_Password:
+        default: Password123
+        secured: true
+      IPAM_Server:
+        default: ipamsvr.contoso.com
+        required: true
+      IPAM_devicename:
+        fixed: CL_VRATEST
+        required: true
+      IPAM_forwardlookupserver: dnssvr.contoso.com
+      IPAM_forwardlookupzone:
+        default: contoso.com
+        required: true
+      IPAM_username:
+        default: contoso\vra-ipam
+        required: true
+      host: ${_resource~fsw-node}
+  SQLAAS_-_Add_Cluster_Service_Account_as_Local_Admin_1:
+    type: Software.SQLAASAddClusterServiceAccountasLocalAdmin
+    dependsOn:
+    - SQLAAS_-_Install_Windows_Failover_Clustering_1
+    data:
+      AD_ClusterAdmin:
+        default: vRA-CL-Admin
+        required: true
+      host: ${_resource~fsw-node}
+  SQLAAS_-_Add_Cluster_Service_Account_as_Local_Admin_2:
+    type: Software.SQLAASAddClusterServiceAccountasLocalAdmin
+    dependsOn:
+    - SQLDiskPrep_1
+    data:
+      AD_ClusterAdmin:
+        default: vRA-CL-Admin
+        required: true
+      host: ${_resource~sql-node}
+  SQLAAS_-_Create_Cluster_1:
+    type: Software.SQLAASCreateCluster
+    dependsOn:
+    - SQLAAS_-_Add_Cluster_Service_Account_as_Local_Admin_1
+    data:
+      AD_OU: OU=Clusters,OU=vRealize,DC=contoso,DC=com
+      AD_Password: Password123
+      AD_User:
+        default: contoso\vRA-CL-Admin
+        required: true
+      ClusterObjectGroup:
+        default: CN=Create Computer Objects,OU=Groups,OU=vRealize,DC=contoso,DC=com
+        required: true
+      DNS_Server:
+        default: 192.168.1.1
+        required: true
+      FSW_Share:
+        default: FSW
+        required: true
+      fswnode_name:
+        fixed: ${_resource~fsw-node~MachineName}
+        required: true
+      host: ${_resource~fsw-node}
+      sqlnode_names:
+        fixed: ${_resource~sql-node~MachineName}
+        required: true
+  SQLAAS_-_Install_SQL_Powershell_1:
+    type: Software.SQLAASInstallSQLPowershell
+    dependsOn:
+    - SQLAAS_-_SQL_Unattended_Installation_1
+    data:
+      AD_Password:
+        default: Password123
+        secured: true
+      AD_User:
+        default: contoso\vRA-CL-Admin
+        required: true
+      SQL2012SetupEXE:
+        default: \\filesvr\vRealize\Servers\SQL\2012\Enterprise\11.00.3000\Setup.exe
+        required: true
+      SQL2012Source:
+        default: \\filesvr\vRealize\Servers\SQL\2012\Enterprise\11.00.3000
+        required: true
+      fsw_node:
+        fixed: ${_resource~fsw-node~MachineName}
+        required: true
+      host: ${_resource~fsw-node}
+  SQLAAS_-_Install_Windows_Failover_Clustering_1:
+    type: Software.SQLAASInstallWindowsFailoverClustering
+    dependsOn:
+    - SQLAAS_-_Install_Windows_Failover_Clustering_2
+    data:
+      host: ${_resource~fsw-node}
+  SQLAAS_-_Install_Windows_Failover_Clustering_2:
+    type: Software.SQLAASInstallWindowsFailoverClustering
+    dependsOn:
+    - IPAM_-_Get_Next_Free_IP_and_Assign_1
+    data:
+      host: ${_resource~sql-node}
+  SQLAAS_-_SQL_Unattended_Installation_1:
+    type: Software.SQLAASSQLUnattendedInstallation
+    dependsOn:
+    - SQLAAS_-_Create_Cluster_1
+    data:
+      AD_Password:
+        default: Password123
+        secured: true
+      AD_User:
+        default: contoso\vRA-CL-Admin
+        required: true
+      FileSource: filesvr
+      FileSourcePassword:
+        default: Password123
+        secured: true
+      FileSourceRoot:
+        default: \\filesvr\vRealize
+        required: true
+      FileSourceUser:
+        default: vRA
+        required: true
+      SQL2012SetupEXE:
+        default: \\filesvr\vRealize\Servers\SQL\2012\Enterprise\11.00.3000\Setup.exe
+        required: true
+      SQL2012Source: \\filesvr\vRealize\Servers\SQL\2012\Enterprise\11.00.3000
+      SQL_ADDCURRENTUSERASSQLADMIN: 'False'
+      SQL_AGTSVCACCOUNT: contoso\SQLAAS-Agent
+      SQL_AGTSVCPASSWORD:
+        default: Password123
+        secured: true
+      SQL_AGTSVCSTARTUPTYPE: Automatic
+      SQL_BROWSERSVCSTARTUPTYPE: Automatic
+      SQL_Features: SQLENGINE
+      SQL_INSTALLSHAREDDIR: D:\Program Files\Microsoft SQL Server
+      SQL_INSTALLSHAREDWOWDIR: D:\Program Files (x86)\Microsoft SQL Server
+      SQL_INSTANCEDIR: D:\Program Files\Microsoft SQL Server
+      SQL_INSTANCEID: SQLAAS_2012
+      SQL_INSTANCENAME: SQLAAS_2012
+      SQL_SECURITYMODE: SQL
+      SQL_SQLCOLLATION: Latin1_General_CI_AS
+      SQL_SQLSVCACCOUNT: contoso\SQLAAS-SQL
+      SQL_SQLSVCPASSWORD:
+        default: Password123
+        secured: true
+      SQL_SQLSVCSTARTUPTYPE: Automatic
+      SQL_SQLSYSADMINACCOUNTS: contoso\SQLAAS SQL Administrators
+      Win2012Source: \\filesvr\vRealize\OS\Win2012R2
+      host: ${_resource~sql-node}
+  SQLAAS_-_Setup_AlwaysOn_Availability_Group_1:
+    type: Software.SQLAASSetupAlwaysOnAvailabilityGroup
+    dependsOn:
+    - SQLAAS_-_Install_SQL_Powershell_1
+    data:
+      AD_Password:
+        default: Password123
+        secured: true
+      AD_User:
+        default: contoso\vRA-CL-Admin
+        required: true
+      IPAM_ConnectionURI: https://ipamsvr.contoso.com:5986/WSMAN
+      IPAM_Password:
+        fixed: Password123
+        secured: true
+      IPAM_Server:
+        default: ipamsvr.contoso.com
+        required: true
+      IPAM_Username:
+        default: contoso\vRA-IPAM
+        required: true
+      IPAM_forwardlookupserver: dnssvr.contoso.com
+      IPAM_forwardlookupzone: contoso.com
+      SQL_AvailabilityGroupName:
+        default: AG1
+        required: true
+      SQL_InstanceName:
+        fixed: ${_resource~SQLAAS_-_SQL_Unattended_Installation_1~SQL_INSTANCENAME}
+        required: true
+      fsw_node:
+        fixed: ${_resource~fsw-node~MachineName}
+        required: true
+      host: ${_resource~fsw-node}
+      sql_nodes:
+        fixed: ${_resource~sql-node~MachineName}
+        required: true
+  SQLAD_1:
+    type: Software.JointoActiveDirectory
+    data:
+      AD_Domain:
+        default: contoso.com
+        required: true
+      AD_OUPath:
+        default: OU=Computers,OU=vRealize,DC=contoso,DC=com
+        required: true
+      AD_Password:
+        default: Password123
+        required: true
+        secured: true
+      AD_Username:
+        default: contoso\vRA-Dom-Join
+        required: true
+      host: ${_resource~sql-node}
+  SQLDiskPrep_1:
+    type: Software.SQLAASDiskPrep
+    dependsOn:
+    - SQLAD_1
+    data:
+      Disk_SQLInstall_Label:
+        default: SQL
+        required: true
+      Disk_SQLInstall_Letter:
+        default: D
+        required: true
+      host: ${_resource~sql-node}
+  fsw-node:
+    type: Infrastructure.CatalogItem.Machine.Virtual.vSphere
+    data:
+      Plugin.AdMachineCleanup.Domain:
+        default: contoso.com
+        required: false
+        secured: false
+        visible: false
+      Plugin.AdMachineCleanup.Execute:
+        default: 'True'
+        required: false
+        secured: false
+        visible: false
+      Plugin.AdMachineCleanup.Password:
+        default: Password123
+        required: false
+        secured: true
+        visible: false
+      Plugin.AdMachineCleanup.RenamePrefix:
+        default: zz
+        required: false
+        secured: false
+        visible: false
+      Plugin.AdMachineCleanup.UserName:
+        default: vRA-Dom-Join
+        required: false
+        secured: false
+        visible: false
+      VirtualMachine.Admin.Description:
+        default: File Share Witness for SQLAAS
+        required: false
+        secured: false
+        visible: false
+      _cluster:
+        fixed: 1
+        min: 1
+      action:
+        fixed: LinkedClone
+      allow_storage_policies:
+        fixed: false
+      blueprint_type:
+        fixed: '1'
+      cpu:
+        fixed: 1
+        min: 1
+      disks:
+      - capacity: 40
+        custom_properties: null
+        id: 1456300947280
+        initial_location: ''
+        is_clone: true
+        label: Hard disk 1
+        storage_reservation_policy: ''
+        userCreated: false
+        volumeId: 0
+      display_location:
+        fixed: false
+      guest_customization_specification: Windows 2012_R2_Customisation
+      machine_prefix:
+        fixed:
+          id: Use group default
+      max_network_adapters: {}
+      max_volumes: {}
+      memory:
+        fixed: 2048
+        min: 2048
+      provisioning_workflow:
+        fixed:
+          id: CloneWorkflow
+          label: CloneWorkflow
+      security_groups: []
+      security_tags: []
+      source_machine:
+        fixed:
+          id: 81d6ada3-9e20-4c22-9871-ab6348e2f924
+          label: Windows 2012 R2 2016.02.24.1 vRA
+      source_machine_external_snapshot:
+        fixed: 2
+      source_machine_name:
+        fixed: Windows 2012 R2 2016.02.24.1 vRA
+      source_machine_vmsnapshot:
+        fixed:
+          id: '13'
+      storage:
+        fixed: 40
+        min: 40
+  sql-node:
+    type: Infrastructure.CatalogItem.Machine.Virtual.vSphere
+    data:
+      Plugin.AdMachineCleanup.Domain:
+        default: contoso.com
+        required: false
+        secured: false
+        visible: false
+      Plugin.AdMachineCleanup.Execute:
+        default: 'True'
+        required: false
+        secured: false
+        visible: false
+      Plugin.AdMachineCleanup.Password:
+        default: Password123
+        required: false
+        secured: true
+        visible: false
+      Plugin.AdMachineCleanup.RenamePrefix:
+        default: zz
+        required: false
+        secured: false
+        visible: false
+      Plugin.AdMachineCleanup.UserName:
+        default: contoso\vRA-Dom-Join
+        required: false
+        secured: false
+        visible: false
+      VirtualMachine.Admin.Description:
+        default: SQLAAS Node
+        required: false
+        secured: false
+        visible: false
+      VirtualMachine.Admin.ThinProvision:
+        default: 'True'
+        required: false
+        secured: false
+        visible: false
+      _cluster:
+        default: 2
+        max: 5
+        min: 2
+      action:
+        fixed: LinkedClone
+      allow_storage_policies:
+        fixed: false
+      blueprint_type:
+        fixed: '1'
+      cpu:
+        fixed: 1
+        min: 1
+      description: SQL Node
+      disks:
+      - capacity: 40
+        custom_properties: null
+        id: 1456300933699
+        initial_location: ''
+        is_clone: true
+        label: Hard disk 1
+        storage_reservation_policy: ''
+        userCreated: false
+        volumeId: 0
+      - capacity: 20
+        id: 1455261663766
+        initial_location: 'D:'
+        is_clone: false
+        label: SQL Install
+        storage_reservation_policy: ''
+        userCreated: true
+        volumeId: 1
+      display_location:
+        fixed: false
+      guest_customization_specification: Windows 2012_R2_Customisation
+      machine_prefix:
+        fixed:
+          id: Use group default
+      max_network_adapters: {}
+      max_volumes: {}
+      memory:
+        fixed: 2048
+        min: 2048
+      provisioning_workflow:
+        fixed:
+          id: CloneWorkflow
+          label: CloneWorkflow
+      security_groups: []
+      security_tags: []
+      source_machine:
+        fixed:
+          id: 81d6ada3-9e20-4c22-9871-ab6348e2f924
+          label: Windows 2012 R2 2016.02.24.1 vRA
+      source_machine_external_snapshot:
+        fixed: 2
+      source_machine_name:
+        fixed: Windows 2012 R2 2016.02.24.1 vRA
+      source_machine_vmsnapshot:
+        fixed:
+          id: '13'
+      storage:
+        fixed: 60
+        min: 60
+layout:
+  FSWAD_1: 0,0
+  FSWConfig_1: 1,0
+  IPAM_-_Get_Next_Free_IP_and_Assign_1: 2,0
+  SQLAAS_-_Add_Cluster_Service_Account_as_Local_Admin_1: 4,0
+  SQLAAS_-_Add_Cluster_Service_Account_as_Local_Admin_2: 2,0
+  SQLAAS_-_Create_Cluster_1: 5,0
+  SQLAAS_-_Install_SQL_Powershell_1: 6,0
+  SQLAAS_-_Install_Windows_Failover_Clustering_1: 3,0
+  SQLAAS_-_Install_Windows_Failover_Clustering_2: 3,0
+  SQLAAS_-_SQL_Unattended_Installation_1: 4,0
+  SQLAAS_-_Setup_AlwaysOn_Availability_Group_1: 7,0
+  SQLAD_1: 0,0
+  SQLDiskPrep_1: 1,0
+  fsw-node: 0,1
+  sql-node: 0,0
+
