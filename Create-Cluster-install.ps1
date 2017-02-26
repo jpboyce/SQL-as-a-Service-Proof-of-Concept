@@ -37,7 +37,7 @@ $guid = [GUID]::NewGuid()
 $guid = $guid.ToString()
 $guid = $guid.Split("-")
 $clustername = "C_"+ $guid[4]     # You can change this prefix.  The [4] block gives 12 characters, so your prefix probably should be limited to 3 characters
-$ClusterNameFQDN = $clustername+".boyce.local"
+$ClusterNameFQDN = $clustername+".contoso.com"
 $ClusterNameFQDN | Out-File c:\ClusterName.txt
 $clusterName | Out-File C:\ClusterShortName.txt
 
