@@ -100,7 +100,7 @@ write-output "Creating New Listener on path $listenerpath with static IP $listen
 Write-Output "Setting Quorum"
 $FSW_Name = $args[6]
 $FSW_Name2 = $FSW_Name.Substring(0,6)
-#$FSW_Name2 = $FSW_Name2+".boyce.local"
+#$FSW_Name2 = $FSW_Name2+".contoso.com"
 
 $FSW_Quorum_Path = "\\"+ $FSW_Name2 +"\FSW" 
 write-output "Quroum Path is going to be on $FSW_Name2 as $FSW_Quorum_Path"
