@@ -1,5 +1,5 @@
 Write-Output "`nSetting CredSSP Registry Setting..."
-Set-ItemProperty HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\Credssp\PolicyDefaults\AllowFreshCredentialsDomain -Name WSMan -Value "WSMAN/*.boyce.local" -Force -Verbose
+Set-ItemProperty HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\Credssp\PolicyDefaults\AllowFreshCredentialsDomain -Name WSMan -Value "WSMAN/*.contoso.com" -Force -Verbose
 
 Write-Output "`nConfirming Setting..."
 Get-ItemProperty HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\Credssp\PolicyDefaults\AllowFreshCredentialsDomain -Name WSMan
